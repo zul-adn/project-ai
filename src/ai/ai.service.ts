@@ -10,7 +10,7 @@ export class AiService {
   async createChat(messages: ChatCompletionDto[]) {
     return this.openai.chat.completions.create({
       messages: messages as ChatCompletionAssistantMessageParam[],
-      model: 'gpt-3.5-turbo',
+      model: 'gpt-4',
     });
   }
 }
