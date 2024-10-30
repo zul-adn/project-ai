@@ -11,7 +11,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
     AiService,
     {
       provide: OpenAI,
-      useFactory: (configService: ConfigService) => new OpenAI({ "apiKey": configService.getOrThrow('OPENAI_KEY')}),
+      useFactory: (configService: ConfigService) =>
+        new OpenAI({ apiKey: configService.getOrThrow('OPENAI_KEY') }),
       inject: [ConfigService],
     },
   ],

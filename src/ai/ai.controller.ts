@@ -3,7 +3,6 @@ import { AiService } from './ai.service';
 import { ChatDto } from './dto/chat.dto';
 
 const format = {
-  id: 'uuid-v4',
   question: 'string',
   choices: [
     {
@@ -24,14 +23,24 @@ const format = {
     },
   ],
   answer: 'uuid-v4',
+  context: 'string',
   explanation: 'string',
 };
 
-const messages = [
-  {
-    role: 'user',
-    content: `can you generate 2 questions about aws cloud practioner exam with multiple choises and generate it to json string following this schema ${JSON.stringify(format)}, give me array object response`,
-  },
+const message = (key: string) => {
+  return `generate 5 questions for ${key} examination with multiple chooses and generate it into following schema ${JSON.stringify(format)}, give me array of object with json format, just give me the json without any words`;
+  // return `buatkan 2 soal untuk ujian skb cpns dengan mengikuti format ini ${JSON.stringify(format)}, dan berikan saya array of object dengan json format, berikan saya json saja, tanpa kata kata lainnya`;
+};
+
+const greetings = [
+  'hai',
+  'hello',
+  'hai!',
+  'hello!',
+  'halo',
+  'halo!',
+  'hi',
+  'hi!',
 ];
 
 @Controller('ai')
@@ -39,12 +48,22 @@ export class AiController {
   constructor(private readonly aiService: AiService) {}
 
   @Post('chat')
-  async createChat(@Body() body: ChatDto) {
-    // return this.aiService.createChat(messages);
-    console.log(body.messages);
-    const questions = await this.aiService.createChat(messages);
-    console.log(questions.choices[0].message.content);
-    console.log(JSON.stringify(questions.choices[0].message.content));
-    return questions.choices[0].message.content;
+  async createChat(@Body() body: any) {
+    const text = body.content.toLowerCase();
+    const isGreeting = greetings.every((word) => text.includes(word));
+
+    if (isGreeting) {
+      return 'Hai, what subject you want to train?';
+    }
+
+    const generatedQuestion = await this.aiService.createChat([
+      {
+        role: 'user',
+        content: message(body.content),
+      },
+    ]);
+    const questions = generatedQuestion.choices[0].message.content;
+    const result = questions.replace(/.*?```json*(.*?)```.*?/, '$1');
+    return JSON.parse(result);
   }
 }
