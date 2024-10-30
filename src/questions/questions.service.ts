@@ -12,7 +12,6 @@ export class QuestionsService {
   ) {}
 
   async createQuestion(question: QuestionDto) {
-    // @ts-expect-error
-    await new this.questionModel.create(question).save();
+    await new this.questionModel(question).save();
   }
 }
