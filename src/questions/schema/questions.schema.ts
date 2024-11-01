@@ -18,8 +18,8 @@ export class Questions {
   @Prop()
   context: string;
 
-  @Prop()
-  choices: string;
+  @Prop({ type: [{ id: { type: String }, text: { type: String } }] })
+  choices: { id: string; text: string }[];
 }
 
 export const QuestionsSchema = SchemaFactory.createForClass(Questions);

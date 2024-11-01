@@ -1,6 +1,7 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { AiService } from './ai.service';
 import { ChatDto } from './dto/chat.dto';
+import { QuestionsService } from '../questions/questions.service';
 
 const format = {
   question: 'string',
@@ -45,7 +46,10 @@ const greetings = [
 
 @Controller('ai')
 export class AiController {
-  constructor(private readonly aiService: AiService) {}
+  constructor(
+    private readonly aiService: AiService,
+    private readonly questionsService: QuestionsService,
+  ) {}
 
   @Post('chat')
   async createChat(@Body() body: any) {
@@ -64,6 +68,7 @@ export class AiController {
     ]);
     const questions = generatedQuestion.choices[0].message.content;
     const result = questions.replace(/.*?```json*(.*?)```.*?/, '$1');
-    return JSON.parse(result);
+    await this.questionsService.createQuestion(JSON.parse(result));
+    // return JSON.parse(result);
   }
 }

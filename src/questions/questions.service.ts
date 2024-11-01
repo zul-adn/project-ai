@@ -12,6 +12,14 @@ export class QuestionsService {
   ) {}
 
   async createQuestion(question: QuestionDto) {
-    await new this.questionModel(question).save();
+    await this.questionModel
+      .insertMany(question)
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    // return await new this.questionModel(question[0]).save();
   }
 }
